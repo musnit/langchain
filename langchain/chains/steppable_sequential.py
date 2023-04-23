@@ -13,6 +13,10 @@ class SteppableSequentialChain(SequentialChain):
     current_chain = 0
     is_running = asyncio.Event()
 
+    @property
+    def _chain_type(self) -> str:
+        return "steppable_sequential_chain"
+
     class NoMoreChainsError(Exception):
         pass
 

@@ -13,6 +13,9 @@ from langchain.llms.openai import OpenAI
 class ConcatenateCoolChain(Chain):
     chain_1: LLMChain
 
+    def _chain_type(self) -> str:
+        return "concatenate_cool_chain"
+
     @property
     def input_keys(self) -> List[str]:
         # Union of the input keys of the two chains.
@@ -67,6 +70,8 @@ async def test_steppable() -> None:
     print("pausing chain...")
     await overall_chain.pause()
     print("chain paused...")
+
+    overall_chain.save(file_path="saved-chain.yaml")
 
     print("waiting 5 seconds...")
     await asyncio.sleep(5)
