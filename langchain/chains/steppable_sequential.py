@@ -1,5 +1,5 @@
 """Chain pipeline where the outputs of one step feed directly into next, but can be paused and stepped."""
-from typing import Dict
+from typing import Any, Dict
 import asyncio
 
 from langchain.chains.sequential import SequentialChain
@@ -64,3 +64,7 @@ class SteppableSequentialChain(SequentialChain):
         raise NotImplementedError(
             "Sync call not supported for this chain type - use async."
         )
+
+    def dict(self, **kwargs: Any):
+        kwargs.setdefault("exclude", set()).add("is_running")
+        return super().dict(**kwargs)
