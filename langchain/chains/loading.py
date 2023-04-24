@@ -25,6 +25,7 @@ from langchain.chains.sql_database.base import SQLDatabaseChain
 from langchain.llms.loading import load_llm, load_llm_from_config
 from langchain.prompts.loading import load_prompt, load_prompt_from_config
 from langchain.utilities.loading import try_load_from_hub
+from langchain.chains.steppable_sequential import SteppableSequentialChain
 
 URL_BASE = "https://raw.githubusercontent.com/hwchase17/langchain-hub/master/chains/"
 
@@ -404,6 +405,24 @@ def _load_llm_requests_chain(config: dict, **kwargs: Any) -> LLMRequestsChain:
         return LLMRequestsChain(llm_chain=llm_chain, **config)
 
 
+def _load_steppable_sequential_chain(
+    config: dict, **kwargs: Any
+) -> SteppableSequentialChain:
+
+    chains = config["chains"]
+    loaded_chains = [load_chain_from_config(chain) for chain in chains]
+
+    steppable_chain = SteppableSequentialChain(
+        chains=loaded_chains,
+        input_variables=config["input_variables"],
+        output_variables=config["output_variables"],
+        current_chain=config["current_chain"],
+        verbose=True,
+    )
+    steppable_chain.known_values = config["known_values"]
+    return steppable_chain
+
+
 type_to_loader_dict = {
     "api_chain": _load_api_chain,
     "hyde_chain": _load_hyde_chain,
@@ -421,6 +440,7 @@ type_to_loader_dict = {
     "sql_database_chain": _load_sql_database_chain,
     "vector_db_qa_with_sources_chain": _load_vector_db_qa_with_sources_chain,
     "vector_db_qa": _load_vector_db_qa,
+    "steppable_sequential_chain": _load_steppable_sequential_chain,
 }
 
 
